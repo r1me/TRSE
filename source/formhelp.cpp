@@ -356,7 +356,7 @@ void formHelp::SearchForItem(QString item)
     // First search through locally generated help
     m_curIsTru = false;
     for (auto d : m_hdb.m_documents) {
-        if (d->m_name.contains(item)) {
+        if (d->m_name.startsWith(item, Qt::CaseInsensitive)) {
             m_curIsTru = true;
             LoadItem(d->m_name);
 //            ui->txtHelp->setText(ApplyColors(d->m_document));
