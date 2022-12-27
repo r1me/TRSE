@@ -151,6 +151,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
+    QProcess::execute("taskkill /im \"x64sc.exe\" /f");
 #endif
     //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__

@@ -122,6 +122,11 @@ void TRSEDocument::UserDefined()
     QProcess p;
 
     QString cmd = m_iniFile->getString("user_defined_command").trimmed();
+
+#ifdef _WIN32
+    QProcess::execute("taskkill /im \""""+cmd+"""'\" /f");
+#endif
+
     QString paramsStr = m_iniFile->getString("user_defined_command_parameters").trimmed();
     if (cmd=="")
         return;
