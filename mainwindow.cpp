@@ -253,12 +253,17 @@ void MainWindow::AfterStart(QString oldCurDir)
 {
     if (m_commandParams.count()>1) {
         QString p1 = m_commandParams[1];
+        QString projectPath = p1;
+
         if (p1.toLower().endsWith(".trse")) {
-#ifdef _WIN32
-            LoadProject(p1);
-#else
-            LoadProject(oldCurDir+QDir::separator()+ p1);
-#endif
+            QFileInfo fileInfo(p1);
+
+            // try combining file path with directory if file path is relative i.e. project.trse -> c:\trse projects\project.trse
+            if (fileInfo.isRelative())
+                projectPath = QDir(oldCurDir).filePath(p1);
+
+            if (QFileInfo(projectPath).exists())
+              LoadProject(projectPath);
         }
     }
 }
@@ -717,45 +722,46 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (fileName.contains(".trt"))  {
         editor = new FormTTREdit(this);
     }
-    editor->m_currentDir = m_currentPath+"/";
-    if (!isExternal)
-        editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
-    else
-        editor->m_currentSourceFile = fileName;
+    if (editor != nullptr)
+    {
+        editor->m_currentDir = m_currentPath+"/";
+        if (!isExternal)
+            editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
+        else
+            editor->m_currentSourceFile = fileName;
 
-    QString s = QDir::separator();
-    // replace "//" with "/"
-    editor->m_currentSourceFile = editor->m_currentSourceFile.replace(s+s,s);
+        QString s = QDir::separator();
+        // replace "//" with "/"
+        editor->m_currentSourceFile = editor->m_currentSourceFile.replace(s+s,s);
 
-    if (isExternal) {
-        fileName = testFilename; //"[external]"+fileName.split(QDir::separator()).last();
+        if (isExternal) {
+            fileName = testFilename; //"[external]"+fileName.split(QDir::separator()).last();
+        }
+        editor->m_currentFileShort = fileName;
+        editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
+        if (!editor->Load(editor->m_currentSourceFile)) {
+            QMessageBox msgBox;
+            msgBox.setText("Error opening file '"+editor->m_currentSourceFile+"'.\nUnknown or corrupt file!");
+            msgBox.exec();
+            return;
+        }
+        ui->tabMain->addTab(editor, fileName);
+
+        m_currentProject.m_ini->addStringList("open_files", editor->m_currentFileShort, true);
+        m_currentProject.Save();
+
+        editor->setFocus();
+        editor->showMaximized();
+        ui->tabMain->setCurrentWidget(editor);
+        ui->tabMain->setTabToolTip(ui->tabMain->currentIndex(),editor->m_currentSourceFile);
+        //m_buildSuccess = false;
+        ui->tabMain->setTabsClosable(true);
+        m_documents.append(editor);
+        m_currentDoc = editor;
+        ConnectDocument();
     }
-    editor->m_currentFileShort = fileName;
-    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
-    if (!editor->Load(editor->m_currentSourceFile)) {
-        QMessageBox msgBox;
-        msgBox.setText("Error opening file '"+editor->m_currentSourceFile+"'.\nUnknown or corrupt file!");
-        msgBox.exec();
-        return;
-    }
-    ui->tabMain->addTab(editor, fileName);
 
-
-    m_currentProject.m_ini->addStringList("open_files", editor->m_currentFileShort, true);
-    m_currentProject.Save();
-
-
-
-    editor->setFocus();
-    editor->showMaximized();
-    ui->tabMain->setCurrentWidget(editor);
-    ui->tabMain->setTabToolTip(ui->tabMain->currentIndex(),editor->m_currentSourceFile);
     m_currentProject.m_ini->setString("current_file", fileName);
-    //m_buildSuccess = false;
-    ui->tabMain->setTabsClosable(true);
-    m_documents.append(editor);
-    m_currentDoc = editor;
-    ConnectDocument();
     m_isClosingWindows = false;
 
 }
@@ -1135,7 +1141,10 @@ void MainWindow::setupIcons()
 
     if (m_iniFile!=nullptr)
     if (m_iniFile->getdouble("disable_file_colors")==1.0) {
-        c1 = c2 = c3 =c4 = 255;
+        if (m_iniFile->getdouble("windowpalette")==1)
+            c1 = c2 = c3 =c4 = 0;
+        else
+            c1 = c2 = c3 =c4 = 255;
     }
 
 

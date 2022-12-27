@@ -88,11 +88,8 @@ public:
         m_filename = projectfile;
         m_projectName = QDir::toNativeSeparators(projectfile).split(QDir::separator()).last().split(".").first();
 
-        QStringList l = m_filename.split("/");
-        l.removeLast();
-        QString path = "";
-        for (QString s: l) path+=s+"/";
-        m_ini->setString("project_path", path);
+        QDir dir = QFileInfo(projectfile).absoluteDir();
+        m_ini->setString("project_path", dir.absolutePath() + "/");
     }
 
     void VerifyDefaults();
