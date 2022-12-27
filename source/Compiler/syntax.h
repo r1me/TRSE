@@ -39,7 +39,13 @@ public:
     unsigned char m_value;
     unsigned char m_row, m_column;
 
-    C64Key() {}
+    C64Key() {
+        m_name = "";
+        m_key = "";
+        m_value = 0;
+        m_row = 0;
+        m_column = 0;
+    }
     C64Key(QString name, QString key, int value, int row, int column) {
         m_name = name;
         m_key = key;

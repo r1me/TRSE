@@ -39,7 +39,12 @@ public:
     enum Severity {Msg, Warning, Error, Welcome};
     Severity m_severity;
 
-    Message() {}
+    Message() {
+        m_message = "";
+        m_id = 0;
+        m_ignore = false;
+        m_severity = Severity::Msg;
+    }
 
     Message(int id, Severity sev, QString msg) {
         m_message = msg;
