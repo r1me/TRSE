@@ -1138,7 +1138,10 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-    QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
+    QString filename = t->m_filename;
+    QFileInfo fileInfo(filename);
+    if (fileInfo.isRelative())
+        filename = QDir(as->m_projectDir).filePath(t->m_filename);
     if (!QFile::exists(filename)) {
 
         filename = Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator()+  t->m_filename.replace("\\","/");        //Test in Units name
