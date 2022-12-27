@@ -1453,9 +1453,9 @@ void FormImageEditor::InitQtPainter()
 }
 
 void FormImageEditor::FixSplitting(QWidget *w, bool sideVisible) {
-    if (not w->isVisible()) {
+    if (!w->isVisible()) {
         m_lastSizes = ui->splitter->sizes();
-        if (not sideVisible)
+        if (!sideVisible)
             ui->splitter->setSizes(QList<int> {this->width(), 1});
     } else {
         ui->splitter->setSizes(m_lastSizes);
