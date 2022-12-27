@@ -237,6 +237,9 @@ void Syntax::SetupKeys()
     m_c64keys[0x28] = C64Key("-","KEY_MINUS",0x28 , row[5], column[3]);
     m_c64keys[0x1c] = C64Key("£","KEY_POUND",0x1c , row[6], column[0]);
     m_c64keys[0xF0] = C64Key("ENTER","KEY_ENTER",0xF0 , row[0], column[1]);
+    m_c64keys[0xF2] = C64Key("DELETE","KEY_DELETE",0xF2 , row[0], column[0]);
+    m_c64keys[0xF4] = C64Key("CURSOR_RT","KEY_CURSOR_RT",0xF4 , row[0], column[2]);
+    m_c64keys[0xF6] = C64Key("CURSOR_DN","KEY_CURSOR_DN",0xF6 , row[0], column[7]);
     m_c64keys[0x2a] = C64Key("*","KEY_ASTERIX",0x2a , row[6], column[1]);
     m_c64keys[0x3b] = C64Key(";","KEY_SEMI",0x3b , row[6], column[2]);
     m_c64keys[0xEF] = C64Key("HOME","KEY_HOME",0xEF , row[6], column[3]);
